@@ -1,6 +1,6 @@
 /**
- * EPIC TECH AI // MEDIA_INTERFACE_V2.2
- * CORE: AUDIO_UNLOCKED_ENGINE
+ * EPIC TECH AI // MEDIA_INTERFACE_V2.3
+ * CORE: UNIVERSAL_INJECTOR [IMAGE_VIDEO_AUDIO]
  */
 
 let scene, camera, renderer, particles;
@@ -10,20 +10,20 @@ const mediaInput = document.getElementById('media-upload');
 
 // --- TERMINAL BOOT SEQUENCE ---
 function startTerminal() {
-    // Hide overlay and show UI
     document.getElementById('boot-overlay').style.display = 'none';
     document.getElementById('ui-container').style.display = 'flex';
     
-    // Initialize Engine
     initNeuralEngine();
     animate();
     
-    // Logic: Initializing Audio Context (Silent Start)
+    // Unlock Audio Context for all media types
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    audioCtx.resume();
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
 
-    logToTerminal('EPIC TECH AI CORE V2.2 ONLINE.', 'SYSTEM');
-    logToTerminal('AUDIO INTERFACE: UNLOCKED & READY.', 'SYSTEM');
+    logToTerminal('EPIC TECH AI CORE V2.3 ONLINE.', 'SYSTEM');
+    logToTerminal('UNIVERSAL MEDIA INJECTOR: ACTIVE.', 'SYSTEM');
 }
 
 // --- NEURAL ENGINE SETUP ---
@@ -40,52 +40,58 @@ function initNeuralEngine() {
         vertices.push(THREE.MathUtils.randFloatSpread(100), THREE.MathUtils.randFloatSpread(100), THREE.MathUtils.randFloatSpread(100));
     }
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-    particles = new THREE.Points(geometry, new THREE.PointsMaterial({ color: 0x00f2ff, size: 0.1, transparent: true, opacity: 0.6 }));
+    particles = new THREE.Points(geometry, new THREE.PointsMaterial({ color: 0x00f2ff, size: 0.12, transparent: true, opacity: 0.7 }));
     scene.add(particles);
     camera.position.z = 40;
 }
 
-// --- MEDIA INJECTION (AUDIO PLAYBACK FIX) ---
+// --- UNIVERSAL MEDIA INJECTION ---
 function processFile(file) {
     const reader = new FileReader();
     const assetDisplay = document.getElementById('asset-display');
     const mediaName = document.getElementById('media-name');
 
     logToTerminal(`INJECTING: ${file.name.toUpperCase()}`, 'NEURAL_DATA');
-    mediaName.innerText = file.name.split('.')[0].toUpperCase();
+    mediaName.innerText = file.name.toUpperCase();
 
     reader.onload = (e) => {
         assetDisplay.innerHTML = ''; 
 
+        // VIDEO HANDLER
         if (file.type.startsWith('video/')) {
             const video = document.createElement('video');
             video.src = e.target.result;
             video.autoplay = true;
             video.loop = true;
             video.playsInline = true;
-            
-            // WE REMOVED video.muted = true! 
-            // Because of the 'startTerminal' click, unmuted should now work.
-            
-            const playPromise = video.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    logToTerminal('MEDIA STREAM: ACTIVE_WITH_AUDIO', 'SUCCESS');
-                }).catch(error => {
-                    logToTerminal('BROWSER BLOCKED AUDIO. MUTING AS FALLBACK.', 'WARNING');
-                    video.muted = true;
-                    video.play();
-                });
-            }
+            video.play().catch(() => logToTerminal('AUDIO_BLOCKED: CLICK TO UNMUTE', 'WARN'));
             assetDisplay.appendChild(video);
-
-        } else if (file.type.startsWith('image/')) {
+        } 
+        // AUDIO HANDLER (MP3/WAV)
+        else if (file.type.startsWith('audio/')) {
+            const audio = new Audio(e.target.result);
+            audio.play().catch(() => logToTerminal('AUDIO_BLOCKED: INTERACTION REQUIRED', 'WARN'));
+            
+            // Create a visual indicator for audio
+            const visualizer = document.createElement('div');
+            visualizer.className = 'audio-visual-mode';
+            for(let i=0; i<5; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'audio-bar';
+                bar.style.animationDelay = `${i * 0.1}s`;
+                visualizer.appendChild(bar);
+            }
+            assetDisplay.appendChild(visualizer);
+            logToTerminal('AUDIO STREAM INITIALIZED.', 'SUCCESS');
+        }
+        // IMAGE HANDLER
+        else if (file.type.startsWith('image/')) {
             const img = document.createElement('img');
             img.src = e.target.result;
             assetDisplay.appendChild(img);
         }
         
-        gsap.from(assetDisplay, { duration: 0.8, opacity: 0, scale: 0.8, ease: "back.out" });
+        gsap.from(assetDisplay, { duration: 0.8, opacity: 0, scale: 0.5, ease: "expo.out" });
     };
     reader.readAsDataURL(file);
 }
@@ -104,9 +110,10 @@ function handleCommand(cmd) {
     if(!cleanCmd) return;
     logToTerminal(cleanCmd, 'USER');
     if(cleanCmd === 'INJECT_MEDIA') mediaInput.click();
+    if(cleanCmd === 'SCAN_SOUND') gsap.to(particles.rotation, { duration: 2, y: "+=3.14" });
 }
 
-// --- LISTENERS ---
+// --- EVENT LISTENERS ---
 dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
 dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('drag-over'); });
 dropZone.addEventListener('drop', (e) => {
@@ -125,6 +132,12 @@ document.querySelectorAll('.node-btn').forEach(btn => {
 
 function animate() {
     requestAnimationFrame(animate);
-    particles.rotation.y += 0.001;
+    particles.rotation.y += 0.0012;
     renderer.render(scene, camera);
 }
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
