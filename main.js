@@ -1,64 +1,34 @@
 /**
- * EPIC TECH AI // MEDIA_INTERFACE_V2.4
- * CORE: PERSISTENT_BACKPACK_ENGINE
+ * EPIC TECH AI // NEURAL_OVERRIDE_V2.5
+ * CORE: IMMERSIVE_MEDIA_PORTAL
  */
 
 let scene, camera, renderer, particles;
 const terminalOutput = document.getElementById('terminal-output');
 const dropZone = document.getElementById('drop-zone');
 const mediaInput = document.getElementById('media-upload');
+const injectBtn = document.getElementById('inject-btn');
+const portal = document.getElementById('fullscreen-video-portal');
+const portalContent = document.getElementById('portal-content');
 
-// --- DIGITAL BACKPACK STORAGE LOGIC ---
-let smokenTokens = parseInt(localStorage.getItem('smoken_tokens')) || 0;
-
-function updateWallet(amount) {
-    smokenTokens += amount;
-    localStorage.setItem('smoken_tokens', smokenTokens);
-    document.getElementById('token-balance').innerText = smokenTokens.toString().padStart(4, '0');
-    if (amount > 0) logToTerminal(`CREDIT: +${amount} SMOKEN_TOKENS`, 'ECONOMY');
-}
-
-function saveToBackpack(fileName, fileData, type) {
-    localStorage.setItem('backpack_asset_name', fileName);
-    localStorage.setItem('backpack_asset_data', fileData);
-    localStorage.setItem('backpack_asset_type', type);
-    document.getElementById('backpack-status').innerText = "DATA_LOADED";
-    logToTerminal('NEURAL_DATA SAVED TO DIGITAL BACKPACK.', 'SYSTEM');
-}
-
-function pullBackpack() {
-    const savedName = localStorage.getItem('backpack_asset_name');
-    const savedData = localStorage.getItem('backpack_asset_data');
-    const savedType = localStorage.getItem('backpack_asset_type');
-
-    if (savedData) {
-        logToTerminal(`RETRIEVING: ${savedName}`, 'BACKPACK');
-        renderMedia(savedData, savedType, savedName);
-    } else {
-        logToTerminal('BACKPACK IS EMPTY.', 'WARNING');
-    }
-}
-
-// --- TERMINAL BOOT SEQUENCE ---
+// --- GATEWAY INITIALIZATION ---
 function startTerminal() {
-    document.getElementById('boot-overlay').style.display = 'none';
-    document.getElementById('ui-container').style.display = 'flex';
-    
+    gsap.to('#boot-overlay', { duration: 1.5, opacity: 0, scale: 2, ease: "expo.inOut", onComplete: () => {
+        document.getElementById('boot-overlay').style.display = 'none';
+        document.getElementById('ui-container').style.display = 'flex';
+        
+        // Stunner: Burst particles on entry
+        gsap.to(particles.material, { size: 0.5, duration: 2, yoyo: true, repeat: 1 });
+    }});
+
     initNeuralEngine();
     animate();
     
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
-
-    updateWallet(0); // Initialize wallet display
-    
-    // Auto-pull from backpack on boot
-    if(localStorage.getItem('backpack_asset_data')) {
-        setTimeout(pullBackpack, 1000);
-    }
 }
 
-// --- NEURAL ENGINE ---
+// --- THREE.JS NEURAL BACKGROUND ---
 function initNeuralEngine() {
     const canvas = document.getElementById('neural-canvas');
     scene = new THREE.Scene();
@@ -68,105 +38,98 @@ function initNeuralEngine() {
 
     const geometry = new THREE.BufferGeometry();
     const vertices = [];
-    for (let i = 0; i < 5000; i++) {
-        vertices.push(THREE.MathUtils.randFloatSpread(100), THREE.MathUtils.randFloatSpread(100), THREE.MathUtils.randFloatSpread(100));
+    for (let i = 0; i < 8000; i++) {
+        vertices.push(THREE.MathUtils.randFloatSpread(150), THREE.MathUtils.randFloatSpread(150), THREE.MathUtils.randFloatSpread(150));
     }
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-    particles = new THREE.Points(geometry, new THREE.PointsMaterial({ color: 0x00f2ff, size: 0.12, transparent: true, opacity: 0.7 }));
+    particles = new THREE.Points(geometry, new THREE.PointsMaterial({ color: 0x00f2ff, size: 0.08, transparent: true, opacity: 0.8 }));
     scene.add(particles);
-    camera.position.z = 40;
+    camera.position.z = 50;
 }
 
-// --- UNIVERSAL RENDERER ---
-function renderMedia(data, type, name) {
-    const assetDisplay = document.getElementById('asset-display');
-    const mediaName = document.getElementById('media-name');
-    assetDisplay.innerHTML = '';
-    mediaName.innerText = name.toUpperCase();
-
-    if (type.startsWith('video/')) {
-        const video = document.createElement('video');
-        video.src = data;
-        video.autoplay = true;
-        video.loop = true;
-        video.playsInline = true;
-        video.play();
-        assetDisplay.appendChild(video);
-    } else if (type.startsWith('audio/')) {
-        const audio = new Audio(data);
-        audio.play();
-        const visualizer = document.createElement('div');
-        visualizer.className = 'audio-visual-mode';
-        for(let i=0; i<5; i++) {
-            const bar = document.createElement('div');
-            bar.className = 'audio-bar';
-            bar.style.animationDelay = `${i * 0.1}s`;
-            visualizer.appendChild(bar);
-        }
-        assetDisplay.appendChild(visualizer);
-    } else if (type.startsWith('image/')) {
-        const img = document.createElement('img');
-        img.src = data;
-        assetDisplay.appendChild(img);
-    }
-    gsap.from(assetDisplay, { duration: 0.8, opacity: 0, scale: 0.5, ease: "expo.out" });
-}
-
-// --- FILE PROCESSING ---
+// --- MEDIA PORTAL LOGIC ---
 function processFile(file) {
     const reader = new FileReader();
-    logToTerminal(`INJECTING: ${file.name.toUpperCase()}`, 'NEURAL_DATA');
+    logToTerminal(`INJECTING NEURAL DATA: ${file.name.toUpperCase()}`, 'CRITICAL');
 
     reader.onload = (e) => {
-        const fileData = e.target.result;
-        renderMedia(fileData, file.type, file.name);
-        saveToBackpack(file.name, fileData, file.type);
-        updateWallet(100); 
+        const data = e.target.result;
+        
+        if (file.type.startsWith('video/')) {
+            openVideoPortal(data);
+        } else {
+            renderMedia(data, file.type, file.name);
+        }
     };
     reader.readAsDataURL(file);
 }
 
-// --- SYSTEM UTILS ---
-function logToTerminal(message, type = 'SYSTEM') {
-    const p = document.createElement('p');
-    p.className = 'line';
-    p.innerHTML = `<span style="color: #ff00ff">[${type}]</span> ${message}`;
-    terminalOutput.appendChild(p);
-    dropZone.scrollTop = dropZone.scrollHeight;
+function openVideoPortal(src) {
+    portalContent.innerHTML = `<video src="${src}" autoplay loop playsinline></video>`;
+    portal.style.display = 'flex';
+    gsap.from(portal, { opacity: 0, duration: 1 });
+    logToTerminal('IMMERSIVE_PORTAL_ACTIVE: ESC TO RETURN', 'SYSTEM');
 }
 
-function handleCommand(cmd) {
-    const cleanCmd = cmd.trim().toUpperCase();
-    if(!cleanCmd) return;
-    logToTerminal(cleanCmd, 'USER');
-    if(cleanCmd === 'INJECT_MEDIA') mediaInput.click();
-    if(cleanCmd === 'SCAN_SOUND') gsap.to(particles.rotation, { duration: 2, y: "+=3.14" });
-    if(cleanCmd === 'PULL_BACKPACK') pullBackpack();
-    if(cleanCmd === 'PURGE_DATA') {
-        localStorage.clear();
-        location.reload();
+function closePortal() {
+    portalContent.innerHTML = '';
+    portal.style.display = 'none';
+    logToTerminal('PORTAL_CLOSED. RETURNING TO TERMINAL.', 'SYSTEM');
+}
+
+function renderMedia(data, type, name) {
+    const display = document.getElementById('asset-display');
+    const label = document.getElementById('media-name');
+    display.innerHTML = '';
+    label.innerText = name.toUpperCase();
+
+    if (type.startsWith('audio/')) {
+        const audio = new Audio(data);
+        audio.play();
+        
+        // MIND-BLOW VISUALIZER
+        const container = document.createElement('div');
+        container.className = 'audio-visual-container';
+        for(let i=0; i<15; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'visual-bar';
+            bar.style.animationDuration = `${0.2 + Math.random() * 0.5}s`;
+            container.appendChild(bar);
+        }
+        display.appendChild(container);
+        
+        // Sync particles to audio vibe
+        gsap.to(particles.rotation, { y: "+=6.28", duration: 10, repeat: -1, ease: "none" });
+    } else if (type.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = data;
+        img.style.maxWidth = "100%";
+        display.appendChild(img);
     }
 }
 
-// --- LISTENERS ---
-dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('drag-over'); });
-dropZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropZone.classList.remove('drag-over');
-    if (e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]);
-});
+// --- UTILS & EVENTS ---
+function logToTerminal(msg, type = 'SYSTEM') {
+    const p = document.createElement('p');
+    p.className = 'line';
+    p.innerHTML = `<span style="color: #ff00ff">[${type}]</span> ${msg}`;
+    terminalOutput.appendChild(p);
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+}
 
+injectBtn.addEventListener('click', () => mediaInput.click());
 mediaInput.addEventListener('change', (e) => {
     if (e.target.files[0]) processFile(e.target.files[0]);
 });
 
-document.querySelectorAll('.node-btn').forEach(btn => {
-    btn.addEventListener('click', () => handleCommand(btn.dataset.cmd));
+// ESC Key closes portal
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closePortal();
 });
 
 function animate() {
     requestAnimationFrame(animate);
-    particles.rotation.y += 0.0012;
+    particles.rotation.x += 0.0005;
+    particles.rotation.y += 0.0005;
     renderer.render(scene, camera);
 }
