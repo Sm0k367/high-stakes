@@ -1,12 +1,43 @@
 /**
- * EPIC TECH AI // MEDIA_INTERFACE_V2.3
- * CORE: UNIVERSAL_INJECTOR [IMAGE_VIDEO_AUDIO]
+ * EPIC TECH AI // MEDIA_INTERFACE_V2.4
+ * CORE: PERSISTENT_BACKPACK_ENGINE
  */
 
 let scene, camera, renderer, particles;
 const terminalOutput = document.getElementById('terminal-output');
 const dropZone = document.getElementById('drop-zone');
 const mediaInput = document.getElementById('media-upload');
+
+// --- DIGITAL BACKPACK STORAGE LOGIC ---
+let smokenTokens = parseInt(localStorage.getItem('smoken_tokens')) || 0;
+
+function updateWallet(amount) {
+    smokenTokens += amount;
+    localStorage.setItem('smoken_tokens', smokenTokens);
+    document.getElementById('token-balance').innerText = smokenTokens.toString().padStart(4, '0');
+    if (amount > 0) logToTerminal(`CREDIT: +${amount} SMOKEN_TOKENS`, 'ECONOMY');
+}
+
+function saveToBackpack(fileName, fileData, type) {
+    localStorage.setItem('backpack_asset_name', fileName);
+    localStorage.setItem('backpack_asset_data', fileData);
+    localStorage.setItem('backpack_asset_type', type);
+    document.getElementById('backpack-status').innerText = "DATA_LOADED";
+    logToTerminal('NEURAL_DATA SAVED TO DIGITAL BACKPACK.', 'SYSTEM');
+}
+
+function pullBackpack() {
+    const savedName = localStorage.getItem('backpack_asset_name');
+    const savedData = localStorage.getItem('backpack_asset_data');
+    const savedType = localStorage.getItem('backpack_asset_type');
+
+    if (savedData) {
+        logToTerminal(`RETRIEVING: ${savedName}`, 'BACKPACK');
+        renderMedia(savedData, savedType, savedName);
+    } else {
+        logToTerminal('BACKPACK IS EMPTY.', 'WARNING');
+    }
+}
 
 // --- TERMINAL BOOT SEQUENCE ---
 function startTerminal() {
@@ -16,17 +47,18 @@ function startTerminal() {
     initNeuralEngine();
     animate();
     
-    // Unlock Audio Context for all media types
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
 
-    logToTerminal('EPIC TECH AI CORE V2.3 ONLINE.', 'SYSTEM');
-    logToTerminal('UNIVERSAL MEDIA INJECTOR: ACTIVE.', 'SYSTEM');
+    updateWallet(0); // Initialize wallet display
+    
+    // Auto-pull from backpack on boot
+    if(localStorage.getItem('backpack_asset_data')) {
+        setTimeout(pullBackpack, 1000);
+    }
 }
 
-// --- NEURAL ENGINE SETUP ---
+// --- NEURAL ENGINE ---
 function initNeuralEngine() {
     const canvas = document.getElementById('neural-canvas');
     scene = new THREE.Scene();
@@ -45,53 +77,51 @@ function initNeuralEngine() {
     camera.position.z = 40;
 }
 
-// --- UNIVERSAL MEDIA INJECTION ---
-function processFile(file) {
-    const reader = new FileReader();
+// --- UNIVERSAL RENDERER ---
+function renderMedia(data, type, name) {
     const assetDisplay = document.getElementById('asset-display');
     const mediaName = document.getElementById('media-name');
+    assetDisplay.innerHTML = '';
+    mediaName.innerText = name.toUpperCase();
 
+    if (type.startsWith('video/')) {
+        const video = document.createElement('video');
+        video.src = data;
+        video.autoplay = true;
+        video.loop = true;
+        video.playsInline = true;
+        video.play();
+        assetDisplay.appendChild(video);
+    } else if (type.startsWith('audio/')) {
+        const audio = new Audio(data);
+        audio.play();
+        const visualizer = document.createElement('div');
+        visualizer.className = 'audio-visual-mode';
+        for(let i=0; i<5; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'audio-bar';
+            bar.style.animationDelay = `${i * 0.1}s`;
+            visualizer.appendChild(bar);
+        }
+        assetDisplay.appendChild(visualizer);
+    } else if (type.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = data;
+        assetDisplay.appendChild(img);
+    }
+    gsap.from(assetDisplay, { duration: 0.8, opacity: 0, scale: 0.5, ease: "expo.out" });
+}
+
+// --- FILE PROCESSING ---
+function processFile(file) {
+    const reader = new FileReader();
     logToTerminal(`INJECTING: ${file.name.toUpperCase()}`, 'NEURAL_DATA');
-    mediaName.innerText = file.name.toUpperCase();
 
     reader.onload = (e) => {
-        assetDisplay.innerHTML = ''; 
-
-        // VIDEO HANDLER
-        if (file.type.startsWith('video/')) {
-            const video = document.createElement('video');
-            video.src = e.target.result;
-            video.autoplay = true;
-            video.loop = true;
-            video.playsInline = true;
-            video.play().catch(() => logToTerminal('AUDIO_BLOCKED: CLICK TO UNMUTE', 'WARN'));
-            assetDisplay.appendChild(video);
-        } 
-        // AUDIO HANDLER (MP3/WAV)
-        else if (file.type.startsWith('audio/')) {
-            const audio = new Audio(e.target.result);
-            audio.play().catch(() => logToTerminal('AUDIO_BLOCKED: INTERACTION REQUIRED', 'WARN'));
-            
-            // Create a visual indicator for audio
-            const visualizer = document.createElement('div');
-            visualizer.className = 'audio-visual-mode';
-            for(let i=0; i<5; i++) {
-                const bar = document.createElement('div');
-                bar.className = 'audio-bar';
-                bar.style.animationDelay = `${i * 0.1}s`;
-                visualizer.appendChild(bar);
-            }
-            assetDisplay.appendChild(visualizer);
-            logToTerminal('AUDIO STREAM INITIALIZED.', 'SUCCESS');
-        }
-        // IMAGE HANDLER
-        else if (file.type.startsWith('image/')) {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            assetDisplay.appendChild(img);
-        }
-        
-        gsap.from(assetDisplay, { duration: 0.8, opacity: 0, scale: 0.5, ease: "expo.out" });
+        const fileData = e.target.result;
+        renderMedia(fileData, file.type, file.name);
+        saveToBackpack(file.name, fileData, file.type);
+        updateWallet(100); 
     };
     reader.readAsDataURL(file);
 }
@@ -111,9 +141,14 @@ function handleCommand(cmd) {
     logToTerminal(cleanCmd, 'USER');
     if(cleanCmd === 'INJECT_MEDIA') mediaInput.click();
     if(cleanCmd === 'SCAN_SOUND') gsap.to(particles.rotation, { duration: 2, y: "+=3.14" });
+    if(cleanCmd === 'PULL_BACKPACK') pullBackpack();
+    if(cleanCmd === 'PURGE_DATA') {
+        localStorage.clear();
+        location.reload();
+    }
 }
 
-// --- EVENT LISTENERS ---
+// --- LISTENERS ---
 dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
 dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('drag-over'); });
 dropZone.addEventListener('drop', (e) => {
@@ -135,9 +170,3 @@ function animate() {
     particles.rotation.y += 0.0012;
     renderer.render(scene, camera);
 }
-
-window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-});
