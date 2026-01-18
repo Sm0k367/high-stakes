@@ -1,3 +1,35 @@
+/* --- BOOT OVERLAY --- */
+#boot-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--epic-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure it's on top of everything */
+    cursor: pointer;
+    border: 2px solid var(--epic-cyan);
+}
+
+.boot-text {
+    color: var(--epic-cyan);
+    font-size: 1.2rem;
+    letter-spacing: 5px;
+    text-shadow: var(--glow);
+    animation: boot-flicker 2s infinite;
+    text-align: center;
+    padding: 20px;
+}
+
+@keyframes boot-flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* --- PREVIOUS STYLES (Keep these) --- */
 :root {
     --epic-cyan: #00f2ff;
     --epic-magenta: #ff00ff;
@@ -8,12 +40,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    cursor: crosshair;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
     background-color: var(--epic-dark);
@@ -24,43 +51,27 @@ body {
     text-transform: uppercase;
 }
 
-#neural-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1;
-}
+#neural-canvas { position: fixed; top: 0; left: 0; z-index: 1; }
 
 #ui-container {
     position: relative;
-    z-index: 10; /* Above the canvas */
+    z-index: 10;
     display: flex;
     flex-direction: column;
     height: 100vh;
     padding: 20px;
-    background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.6) 100%);
 }
 
-.viewport {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 20px;
-    padding: 20px 0;
-    min-height: 0; /* Important for flex child scrolling */
-}
-
-/* --- MEDIA PREVIEW FIXES --- */
+/* Ensure Media Area is accessible */
 .media-preview {
     border: 1px solid var(--epic-magenta);
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.8);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
     overflow: hidden;
-    box-shadow: inset 0 0 30px rgba(255, 0, 255, 0.1);
 }
 
 #asset-display {
@@ -69,59 +80,25 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 5;
 }
 
-#asset-display img, #asset-display video {
-    max-width: 95%;
+#asset-display video, #asset-display img {
+    max-width: 90%;
     max-height: 90%;
-    border: 1px solid var(--epic-magenta);
-    box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
-    object-fit: contain;
+    box-shadow: 0 0 20px var(--epic-magenta);
 }
 
-.neural-orb {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    border: 2px solid var(--epic-magenta);
-    animation: pulse 4s infinite;
-}
-
-/* --- SCANNER & TERMINAL --- */
-.scanner-frame {
-    border: 1px solid var(--epic-border);
-    background: rgba(0, 242, 255, 0.05);
-    padding: 20px;
-    overflow-y: auto;
-    position: relative;
-}
-
-.scanner-frame.drag-over {
-    background: rgba(0, 242, 255, 0.2);
-    border: 2px dashed var(--epic-cyan);
-}
-
-/* --- CRT & OVERLAYS --- */
 .crt-lines {
     position: fixed;
     inset: 0;
     background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
     background-size: 100% 4px;
-    z-index: 100; /* Highest z-index */
-    pointer-events: none; /* CRITICAL: Allows clicking through to video */
-    opacity: 0.4;
+    z-index: 100;
+    pointer-events: none; /* Allows clicking through to video controls */
 }
 
-@keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 0.5; }
-    50% { transform: scale(1.2); opacity: 1; }
-}
-
-/* Rest of standard terminal styles (Headers, Nodes, etc) from previous turns... */
+/* Header, Control, and Node button styles... */
 .epic-header { display: flex; justify-content: space-between; border-bottom: 1px solid var(--epic-border); padding-bottom: 15px; }
-.glitch-title { font-size: 2rem; letter-spacing: 5px; }
 .quick-nodes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
-.node-btn { background: transparent; border: 1px solid var(--epic-border); color: var(--epic-cyan); padding: 10px; font-family: inherit; }
+.node-btn { background: transparent; border: 1px solid var(--epic-border); color: var(--epic-cyan); padding: 10px; cursor: pointer; }
 .node-btn:hover { background: var(--epic-cyan); color: #000; }
-#neural-input { width: 100%; background: #111; border: 1px solid var(--epic-cyan); padding: 15px; color: #fff; font-family: inherit; margin-bottom: 10px; }
