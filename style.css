@@ -1,107 +1,91 @@
-/* --- PORTAL HUD CONTROLS --- */
-.portal-controls {
-    position: absolute;
-    top: 40px;
-    right: 40px;
-    display: flex;
-    gap: 20px;
-    z-index: 10001; /* Above the video content */
+:root {
+    --epic-cyan: #00f2ff;
+    --epic-magenta: #ff00ff;
+    --epic-dark: #020202;
+    --glow: 0 0 20px rgba(0, 242, 255, 0.6);
 }
 
-.portal-btn {
-    background: rgba(2, 2, 2, 0.7);
-    border: 1px solid var(--epic-cyan);
+* { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
+
+body {
+    background: var(--epic-dark);
     color: var(--epic-cyan);
-    padding: 12px 24px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    letter-spacing: 2px;
-    cursor: pointer;
-    transition: 0.3s;
-    backdrop-filter: blur(5px);
-    text-shadow: var(--glow);
+    height: 100vh;
+    overflow: hidden;
+    text-transform: uppercase;
 }
 
-.portal-btn:hover {
+/* --- LAYER HIERARCHY (The Fix) --- */
+#neural-canvas { position: fixed; inset: 0; z-index: 1; }
+
+.crt-lines {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+    background-size: 100% 4px;
+    z-index: 2000; 
+    pointer-events: none; /* ALLOWS CLICKS TO PASS THROUGH */
+    opacity: 0.2;
+}
+
+#ui-container {
+    position: relative;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 30px;
+}
+
+/* --- INTERACTIVE BUTTON --- */
+.main-inject-btn {
+    width: 100%;
+    padding: 30px;
+    background: rgba(0, 242, 255, 0.05);
+    border: 2px solid var(--epic-cyan);
+    color: var(--epic-cyan);
+    font-size: 1.2rem;
+    font-weight: bold;
+    letter-spacing: 5px;
+    cursor: pointer; /* Force pointer to show it's clickable */
+    transition: 0.3s;
+    pointer-events: auto; /* ENSURE BUTTON IS CLICKABLE */
+}
+
+.main-inject-btn:hover {
     background: var(--epic-cyan);
     color: #000;
     box-shadow: var(--glow);
 }
 
-/* --- QUEUE PREVIEW --- */
-#next-up {
-    font-size: 0.65rem;
-    color: var(--epic-magenta);
-    margin-top: 15px;
-    letter-spacing: 1px;
-    opacity: 0.8;
-    border-left: 2px solid var(--epic-magenta);
-    padding-left: 10px;
-}
-
-/* --- UPDATED BUTTON INTERFACE --- */
-.main-inject-btn {
-    width: 100%;
-    padding: 30px;
-    background: rgba(0, 242, 255, 0.02);
-    border: 2px solid var(--epic-cyan);
-    color: var(--epic-cyan);
-    font-size: 1.1rem;
-    font-weight: bold;
-    letter-spacing: 5px;
+/* --- BOOT OVERLAY --- */
+#boot-overlay {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 1000;
-    position: relative;
-    overflow: hidden;
 }
 
-.main-inject-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.2), transparent);
-    transition: 0.5s;
-}
-
-.main-inject-btn:hover::before {
-    left: 100%;
-}
-
-.main-inject-btn:hover {
-    background: rgba(0, 242, 255, 0.1);
-    box-shadow: inset 0 0 20px var(--epic-cyan);
-}
-
-/* --- CORE STACKING --- */
+/* --- PORTAL --- */
 .hidden-portal {
     position: fixed;
     inset: 0;
     background: #000;
-    z-index: 10000;
+    z-index: 5000;
     display: none;
     justify-content: center;
     align-items: center;
 }
 
-#portal-content {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+.portal-controls { position: absolute; top: 20px; right: 20px; z-index: 5001; display: flex; gap: 10px; }
+.portal-btn { background: #000; border: 1px solid var(--epic-cyan); color: var(--epic-cyan); padding: 10px; cursor: pointer; }
 
-#portal-content video {
-    max-width: 100%;
-    max-height: 100%;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 1);
-}
-
-/* Ensure CRT Lines don't block the Portal Buttons */
-.crt-lines {
-    z-index: 999; 
-}
+/* --- VISUALIZER --- */
+.audio-visual-container { display: flex; align-items: flex-end; gap: 4px; height: 100px; }
+.visual-bar { flex: 1; background: var(--epic-magenta); min-height: 5px; }
