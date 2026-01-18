@@ -2,36 +2,78 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>NCC // NEURAL COMMAND CENTER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPIC TECH AI // HIGH_STAKES TERMINAL</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <style>
-        body { margin: 0; background: #000; overflow: hidden; font-family: 'JetBrains Mono', monospace; }
-        #ui-layer { position: fixed; inset: 0; pointer-events: none; z-index: 10; color: #00ffcc; padding: 20px; }
-        .telemetry { border-left: 2px solid #00ffcc; padding-left: 10px; margin-bottom: 20px; text-transform: uppercase; font-size: 10px; letter-spacing: 2px; }
-        #drop-zone { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: auto; text-align: center; border: 1px dashed #00ffcc; padding: 40px; background: rgba(0,255,204,0.05); cursor: pointer; transition: 0.3s; }
-        #drop-zone:hover { background: rgba(0,255,204,0.15); box-shadow: 0 0 20px rgba(0,255,204,0.3); }
-    </style>
 </head>
 <body>
-    <div id="ui-layer">
-        <div class="telemetry">
-            <div>SYSTEM_STATUS: ACTIVE</div>
-            <div>NEURAL_LOAD: <span id="load">0%</span></div>
-            <div>CURRENT_ERA: 2026_GEN_V</div>
-        </div>
-        
-        <div id="drop-zone">
-            <h2>INJECT_NEURAL_DATA</h2>
-            <p>DRAG_MEDIA_OR_CLICK_TO_SYNK</p>
-        </div>
+    <canvas id="neural-canvas"></canvas>
+    
+    <div id="ui-container">
+        <header class="epic-header">
+            <div class="brand-block">
+                <h1 class="glitch-title" data-text="EPIC TECH AI">EPIC TECH AI</h1>
+                <div class="sub-brand">HIGH_STAKES // NEURAL_INTERFACE</div>
+            </div>
+            <div class="system-status">
+                <div class="status-item">
+                    <span class="label">UPLINK:</span>
+                    <span class="value" id="uplink-status">ESTABLISHED</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">LOAD:</span>
+                    <span class="value" id="system-load">0.042%</span>
+                </div>
+            </div>
+        </header>
 
-        <div style="position:fixed; bottom:20px; right:20px; text-align:right;" class="telemetry">
-            <div>POWERED_BY: @TSI_ORG</div>
-            <div>CORE: @THE_MACHINE_AI</div>
-        </div>
+        <main class="viewport">
+            <div class="scanner-frame">
+                <div class="scan-overlay"></div>
+                <div class="vignette"></div>
+                <div id="terminal-output">
+                    <p class="line">[SYSTEM] INITIALIZING EPIC TECH AI CORE...</p>
+                    <p class="line">[SYSTEM] PACKING DIGITAL BACKPACK...</p>
+                    <p class="line">[SYSTEM] TSI_ORG INFRASTRUCTURE CONNECTED.</p>
+                </div>
+            </div>
+
+            <div class="media-preview">
+                <div id="asset-display">
+                    <img src="https://machine-built.vercel.app/api/og" alt="Epic Tech AI Neural Asset" id="active-asset">
+                </div>
+            </div>
+        </main>
+
+        <section class="control-array">
+            <div class="input-nexus">
+                <input type="text" id="neural-input" placeholder="INJECT DATA OR COMMAND..." spellcheck="false">
+                <button id="process-btn">PROCESS_DATA</button>
+            </div>
+            <div class="quick-nodes">
+                <button class="node-btn" data-cmd="SCAN_SOUND">SCAN_SOUND</button>
+                <button class="node-btn" data-cmd="PULL_BACKPACK">PULL_BACKPACK</button>
+                <button class="node-btn" data-cmd="RENDER_NEURAL">RENDER_NEURAL</button>
+                <button class="node-btn" data-cmd="SYNC_TSI">SYNC_TSI</button>
+            </div>
+        </section>
+
+        <footer class="epic-footer">
+            <div class="partner-links">
+                <span class="partner">@tsi_org</span>
+                <span class="partner">@myaitutor</span>
+                <span class="partner">@pixio_ai</span>
+                <span class="partner">@the_machine_ai</span>
+            </div>
+            <div class="legal">© 2026 EPIC TECH AI // BUILT ON THE MACHINE</div>
+        </footer>
     </div>
-    <canvas id="ncc-canvas"></canvas>
-    <script src="ncc-engine.js"></script>
+
+    <div class="crt-lines"></div>
+    <div class="flicker"></div>
+
+    <script src="main.js"></script>
 </body>
 </html>
