@@ -3,19 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPIC TECH AI // HIGH_STAKES TERMINAL</title>
+    <title>EPIC TECH AI // MEDIA TERMINAL</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
 <body>
+    <div id="boot-overlay" onclick="startTerminal()">
+        <div class="boot-text">CLICK TO INITIALIZE EPIC TECH AI MEDIA LINK</div>
+    </div>
+
     <canvas id="neural-canvas"></canvas>
     
-    <div id="ui-container">
+    <div id="ui-container" style="display: none;">
         <header class="epic-header">
             <div class="brand-block">
                 <h1 class="glitch-title" data-text="EPIC TECH AI">EPIC TECH AI</h1>
-                <div class="sub-brand">HIGH_STAKES // NEURAL_INTERFACE</div>
+                <div class="sub-brand">HIGH_STAKES // MEDIA_INTERFACE</div>
             </div>
             <div class="system-status">
                 <div class="status-item">
@@ -33,12 +37,12 @@
             <div class="scanner-frame" id="drop-zone">
                 <div class="scan-overlay"></div>
                 <div id="terminal-output">
-                    <p class="line">[SYSTEM] EPIC TECH AI CORE V2.1 ONLINE.</p>
-                    <p class="line">[SYSTEM] DROP MEDIA HERE TO INJECT DATA.</p>
+                    <p class="line">[SYSTEM] EPIC TECH AI CORE V2.2 ONLINE.</p>
+                    <p class="line">[SYSTEM] AUDIO INTERFACE: UNLOCKED.</p>
                 </div>
             </div>
 
-            <div class="media-preview" id="media-preview-container">
+            <div class="media-preview">
                 <div id="asset-display">
                     <div class="neural-orb"></div>
                 </div>
@@ -49,7 +53,7 @@
         <section class="control-array">
             <div class="input-nexus">
                 <input type="text" id="neural-input" placeholder="INJECT COMMAND..." spellcheck="false" autocomplete="off">
-                <input type="file" id="media-upload" hidden accept="image/*,video/*,audio/*">
+                <input type="file" id="media-upload" hidden accept="video/*,image/*,audio/*">
                 <button id="process-btn">PROCESS_DATA</button>
             </div>
             <div class="quick-nodes">
@@ -62,9 +66,9 @@
 
         <footer class="epic-footer">
             <div class="partner-links">
-                <span class="partner">@tsi_org</span>
-                <span class="partner">@myaitutor</span>
-                <span class="partner">@pixio_ai</span>
+                <span class="partner">@EpicTechAI</span>
+                <span class="partner">epictechai@gmail.com</span>
+                <span class="partner">x.com/Sm0ken420</span>
             </div>
             <div class="legal">© 2026 EPIC TECH AI // POWERED BY THE MACHINE</div>
         </footer>
