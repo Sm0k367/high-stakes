@@ -19,31 +19,31 @@
             </div>
             <div class="system-status">
                 <div class="status-item">
-                    <span class="label">UPLINK:</span>
-                    <span class="value" id="uplink-status">ESTABLISHED</span>
+                    <span class="label">WALLET:</span>
+                    <span class="value" id="token-balance">0000</span> <span class="label">SMKN</span>
                 </div>
                 <div class="status-item">
                     <span class="label">LOAD:</span>
-                    <span class="value" id="system-load">0.042%</span>
+                    <span class="value" id="system-load">0.000%</span>
                 </div>
             </div>
         </header>
 
         <main class="viewport">
-            <div class="scanner-frame">
+            <div class="scanner-frame" id="drop-zone">
                 <div class="scan-overlay"></div>
                 <div class="vignette"></div>
                 <div id="terminal-output">
                     <p class="line">[SYSTEM] INITIALIZING EPIC TECH AI CORE...</p>
-                    <p class="line">[SYSTEM] PACKING DIGITAL BACKPACK...</p>
-                    <p class="line">[SYSTEM] TSI_ORG INFRASTRUCTURE CONNECTED.</p>
+                    <p class="line">[SYSTEM] SMOKEN_TOKEN ECONOMY: ACTIVE.</p>
+                    <p class="line">[SYSTEM] DROP MEDIA HERE TO INJECT NEURAL DATA.</p>
                 </div>
             </div>
 
             <div class="media-preview">
                 <div id="asset-display">
                     <div class="neural-orb"></div>
-                    <div class="asset-label">NEURAL_ASSET_LOCKED</div>
+                    <div class="asset-label" id="media-name">NEURAL_ASSET_LOCKED</div>
                 </div>
             </div>
         </main>
@@ -51,12 +51,13 @@
         <section class="control-array">
             <div class="input-nexus">
                 <input type="text" id="neural-input" placeholder="INJECT DATA OR COMMAND..." spellcheck="false" autocomplete="off">
+                <input type="file" id="media-upload" hidden accept="image/*,video/*,audio/*">
                 <button id="process-btn">PROCESS_DATA</button>
             </div>
             <div class="quick-nodes">
                 <button class="node-btn" data-cmd="SCAN_SOUND">SCAN_SOUND</button>
                 <button class="node-btn" data-cmd="PULL_BACKPACK">PULL_BACKPACK</button>
-                <button class="node-btn" data-cmd="RENDER_NEURAL">RENDER_NEURAL</button>
+                <button class="node-btn" data-cmd="INJECT_MEDIA">INJECT_MEDIA</button>
                 <button class="node-btn" data-cmd="SYNC_TSI">SYNC_TSI</button>
             </div>
         </section>
