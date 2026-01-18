@@ -1,139 +1,82 @@
-:root {
-    --epic-cyan: #00f2ff;
-    --epic-magenta: #ff00ff;
-    --epic-dark: #020202;
-    --glow: 0 0 20px rgba(0, 242, 255, 0.6);
-}
-
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
-
-* { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
-
-body {
-    background-color: var(--epic-dark);
-    color: var(--epic-cyan);
-    font-family: 'JetBrains Mono', monospace;
-    height: 100vh;
-    overflow: hidden;
-    text-transform: uppercase;
-}
-
-/* --- THE GATEWAY --- */
-#boot-overlay {
-    position: fixed;
-    inset: 0;
-    background: #000;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 99999; /* Highest possible to ensure first click */
-    cursor: pointer;
-}
-
-.visual-gate {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    margin-bottom: 30px;
-}
-
-.gate-ring {
+/* --- PORTAL HUD CONTROLS --- */
+.portal-controls {
     position: absolute;
-    inset: 0;
-    border: 2px solid var(--epic-cyan);
-    border-radius: 50%;
-    animation: rotate-gate 4s linear infinite;
-}
-
-@keyframes rotate-gate {
-    from { transform: rotate(0deg) scale(1); }
-    to { transform: rotate(360deg) scale(1.1); }
-}
-
-/* --- THE BACKGROUND --- */
-#neural-canvas {
-    position: fixed;
-    inset: 0;
-    z-index: 1; /* Lowest layer */
-}
-
-/* --- THE INTERFACE --- */
-#ui-container {
-    position: relative;
-    z-index: 100; /* Above canvas */
+    top: 40px;
+    right: 40px;
     display: flex;
-    flex-direction: column;
-    height: 100vh;
-    padding: 30px;
-    pointer-events: none; /* Allow clicks through to children */
+    gap: 20px;
+    z-index: 10001; /* Above the video content */
 }
 
-/* Re-enable pointer events for interactive elements */
-.epic-header, .viewport, .control-array, .epic-footer {
-    pointer-events: auto;
+.portal-btn {
+    background: rgba(2, 2, 2, 0.7);
+    border: 1px solid var(--epic-cyan);
+    color: var(--epic-cyan);
+    padding: 12px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: 0.3s;
+    backdrop-filter: blur(5px);
+    text-shadow: var(--glow);
 }
 
-.viewport {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 30px;
-    padding: 20px 0;
-    min-height: 0;
+.portal-btn:hover {
+    background: var(--epic-cyan);
+    color: #000;
+    box-shadow: var(--glow);
 }
 
-/* --- THE BUTTON (THE CORE FIX) --- */
+/* --- QUEUE PREVIEW --- */
+#next-up {
+    font-size: 0.65rem;
+    color: var(--epic-magenta);
+    margin-top: 15px;
+    letter-spacing: 1px;
+    opacity: 0.8;
+    border-left: 2px solid var(--epic-magenta);
+    padding-left: 10px;
+}
+
+/* --- UPDATED BUTTON INTERFACE --- */
 .main-inject-btn {
     width: 100%;
     padding: 30px;
-    background: rgba(0, 242, 255, 0.05);
+    background: rgba(0, 242, 255, 0.02);
     border: 2px solid var(--epic-cyan);
     color: var(--epic-cyan);
     font-size: 1.1rem;
     font-weight: bold;
     letter-spacing: 5px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.3s ease;
     z-index: 1000;
+    position: relative;
+    overflow: hidden;
+}
+
+.main-inject-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.2), transparent);
+    transition: 0.5s;
+}
+
+.main-inject-btn:hover::before {
+    left: 100%;
 }
 
 .main-inject-btn:hover {
-    background: var(--epic-cyan);
-    color: #000;
-    box-shadow: var(--glow);
-    transform: translateY(-3px);
+    background: rgba(0, 242, 255, 0.1);
+    box-shadow: inset 0 0 20px var(--epic-cyan);
 }
 
-/* --- VISUALS --- */
-.audio-visual-container {
-    display: flex;
-    align-items: flex-end;
-    gap: 5px;
-    height: 150px;
-}
-
-.visual-bar {
-    flex: 1;
-    background: var(--epic-magenta);
-    animation: bounce 0.5s infinite alternate;
-}
-
-@keyframes bounce {
-    from { height: 10%; }
-    to { height: 100%; }
-}
-
-.crt-lines {
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
-    background-size: 100% 4px;
-    z-index: 999; /* Below overlay, above UI */
-    pointer-events: none; /* VERY IMPORTANT: Prevents blocking clicks */
-    opacity: 0.2;
-}
-
+/* --- CORE STACKING --- */
 .hidden-portal {
     position: fixed;
     inset: 0;
@@ -144,9 +87,21 @@ body {
     align-items: center;
 }
 
-.clickable-link {
-    color: var(--epic-cyan);
-    text-decoration: none;
-    font-weight: bold;
-    pointer-events: auto;
+#portal-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#portal-content video {
+    max-width: 100%;
+    max-height: 100%;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 1);
+}
+
+/* Ensure CRT Lines don't block the Portal Buttons */
+.crt-lines {
+    z-index: 999; 
 }
