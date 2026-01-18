@@ -1,0 +1,17 @@
+{
+  "name": "Epic Tech AI // High-Stakes",
+  "short_name": "HighStakes",
+  "description": "Neural Command Terminal for the TSI Ecosystem",
+  "icons": [
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/index.html",
+  "display": "fullscreen",
+  "background_color": "#020202",
+  "theme_color": "#00f2ff"
+}
