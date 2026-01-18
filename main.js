@@ -1,7 +1,6 @@
 /**
- * EPIC TECH AI // HIGH_STAKES ENGINE
- * CORE: NEURAL_INTERFACE_V2.1 [MEDIA_FIX]
- * POWERED BY: @TSI_ORG
+ * EPIC TECH AI // MEDIA_INTERFACE_V2.2
+ * CORE: AUDIO_UNLOCKED_ENGINE
  */
 
 let scene, camera, renderer, particles;
@@ -9,16 +8,25 @@ const terminalOutput = document.getElementById('terminal-output');
 const dropZone = document.getElementById('drop-zone');
 const mediaInput = document.getElementById('media-upload');
 
-// --- ECONOMY STATE ---
-let smokenTokens = parseInt(localStorage.getItem('smoken_tokens')) || 0;
+// --- TERMINAL BOOT SEQUENCE ---
+function startTerminal() {
+    // Hide overlay and show UI
+    document.getElementById('boot-overlay').style.display = 'none';
+    document.getElementById('ui-container').style.display = 'flex';
+    
+    // Initialize Engine
+    initNeuralEngine();
+    animate();
+    
+    // Logic: Initializing Audio Context (Silent Start)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioCtx.resume();
 
-function updateWallet(amount) {
-    smokenTokens += amount;
-    localStorage.setItem('smoken_tokens', smokenTokens);
-    document.getElementById('token-balance').innerText = smokenTokens.toString().padStart(4, '0');
+    logToTerminal('EPIC TECH AI CORE V2.2 ONLINE.', 'SYSTEM');
+    logToTerminal('AUDIO INTERFACE: UNLOCKED & READY.', 'SYSTEM');
 }
 
-// --- INITIALIZE ENGINE ---
+// --- NEURAL ENGINE SETUP ---
 function initNeuralEngine() {
     const canvas = document.getElementById('neural-canvas');
     scene = new THREE.Scene();
@@ -37,7 +45,7 @@ function initNeuralEngine() {
     camera.position.z = 40;
 }
 
-// --- MEDIA INJECTION LOGIC (THE FIX) ---
+// --- MEDIA INJECTION (AUDIO PLAYBACK FIX) ---
 function processFile(file) {
     const reader = new FileReader();
     const assetDisplay = document.getElementById('asset-display');
@@ -47,22 +55,26 @@ function processFile(file) {
     mediaName.innerText = file.name.split('.')[0].toUpperCase();
 
     reader.onload = (e) => {
-        assetDisplay.innerHTML = ''; // Clear previous content
+        assetDisplay.innerHTML = ''; 
 
         if (file.type.startsWith('video/')) {
             const video = document.createElement('video');
             video.src = e.target.result;
             video.autoplay = true;
             video.loop = true;
-            video.muted = true; // Required for most browsers to allow autoplay
             video.playsInline = true;
-            video.setAttribute('controls', 'true'); // Add controls just in case
             
-            // Force play promise
+            // WE REMOVED video.muted = true! 
+            // Because of the 'startTerminal' click, unmuted should now work.
+            
             const playPromise = video.play();
             if (playPromise !== undefined) {
-                playPromise.catch(() => {
-                    logToTerminal('AUTOPLAY BLOCKED: CLICK VIDEO TO START', 'WARNING');
+                playPromise.then(() => {
+                    logToTerminal('MEDIA STREAM: ACTIVE_WITH_AUDIO', 'SUCCESS');
+                }).catch(error => {
+                    logToTerminal('BROWSER BLOCKED AUDIO. MUTING AS FALLBACK.', 'WARNING');
+                    video.muted = true;
+                    video.play();
                 });
             }
             assetDisplay.appendChild(video);
@@ -71,17 +83,14 @@ function processFile(file) {
             const img = document.createElement('img');
             img.src = e.target.result;
             assetDisplay.appendChild(img);
-        } else {
-            logToTerminal('UNSUPPORTED MIME-TYPE', 'ERROR');
         }
         
         gsap.from(assetDisplay, { duration: 0.8, opacity: 0, scale: 0.8, ease: "back.out" });
-        updateWallet(100); 
     };
     reader.readAsDataURL(file);
 }
 
-// --- UI LOGIC ---
+// --- SYSTEM UTILS ---
 function logToTerminal(message, type = 'SYSTEM') {
     const p = document.createElement('p');
     p.className = 'line';
@@ -95,10 +104,9 @@ function handleCommand(cmd) {
     if(!cleanCmd) return;
     logToTerminal(cleanCmd, 'USER');
     if(cleanCmd === 'INJECT_MEDIA') mediaInput.click();
-    if(cleanCmd === 'SCAN_SOUND') gsap.to(particles.rotation, { duration: 2, y: "+=3.14" });
 }
 
-// --- EVENTS ---
+// --- LISTENERS ---
 dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
 dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('drag-over'); });
 dropZone.addEventListener('drop', (e) => {
@@ -120,9 +128,3 @@ function animate() {
     particles.rotation.y += 0.001;
     renderer.render(scene, camera);
 }
-
-window.onload = () => {
-    initNeuralEngine();
-    animate();
-    updateWallet(0);
-};
