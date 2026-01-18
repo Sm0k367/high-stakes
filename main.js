@@ -1,6 +1,6 @@
 /**
- * EPIC TECH AI // NEURAL_OVERRIDE_V2.5
- * CORE: IMMERSIVE_MEDIA_PORTAL
+ * EPIC TECH AI // NEURAL_OVERRIDE_V2.6
+ * CORE: STABLE_INJECTOR_SYSTEM
  */
 
 let scene, camera, renderer, particles;
@@ -12,25 +12,27 @@ const portal = document.getElementById('fullscreen-video-portal');
 const portalContent = document.getElementById('portal-content');
 
 // --- GATEWAY INITIALIZATION ---
-function startTerminal() {
-    gsap.to('#boot-overlay', { duration: 1.5, opacity: 0, scale: 2, ease: "expo.inOut", onComplete: () => {
-        document.getElementById('boot-overlay').style.display = 'none';
-        document.getElementById('ui-container').style.display = 'flex';
-        
-        // Stunner: Burst particles on entry
-        gsap.to(particles.material, { size: 0.5, duration: 2, yoyo: true, repeat: 1 });
+window.startTerminal = function() {
+    const bootOverlay = document.getElementById('boot-overlay');
+    const uiContainer = document.getElementById('ui-container');
+    
+    gsap.to(bootOverlay, { duration: 1, opacity: 0, pointerEvents: 'none', onComplete: () => {
+        bootOverlay.style.display = 'none';
+        uiContainer.style.display = 'flex';
+        initNeuralEngine();
+        animate();
+        logToTerminal('NEURAL LINK ESTABLISHED.', 'SUCCESS');
     }});
 
-    initNeuralEngine();
-    animate();
-    
+    // Unlock Audio Context
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
-}
+};
 
-// --- THREE.JS NEURAL BACKGROUND ---
+// --- THREE.JS ENGINE ---
 function initNeuralEngine() {
     const canvas = document.getElementById('neural-canvas');
+    if (!canvas) return;
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
@@ -42,39 +44,28 @@ function initNeuralEngine() {
         vertices.push(THREE.MathUtils.randFloatSpread(150), THREE.MathUtils.randFloatSpread(150), THREE.MathUtils.randFloatSpread(150));
     }
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-    particles = new THREE.Points(geometry, new THREE.PointsMaterial({ color: 0x00f2ff, size: 0.08, transparent: true, opacity: 0.8 }));
+    particles = new THREE.Points(geometry, new THREE.PointsMaterial({ color: 0x00f2ff, size: 0.1, transparent: true, opacity: 0.8 }));
     scene.add(particles);
     camera.position.z = 50;
 }
 
-// --- MEDIA PORTAL LOGIC ---
+// --- CORE INJECTION LOGIC ---
 function processFile(file) {
+    if (!file) return;
     const reader = new FileReader();
-    logToTerminal(`INJECTING NEURAL DATA: ${file.name.toUpperCase()}`, 'CRITICAL');
+    logToTerminal(`INJECTING: ${file.name.toUpperCase()}`, 'DATA');
 
     reader.onload = (e) => {
         const data = e.target.result;
-        
-        if (file.type.startsWith('video/')) {
+        const type = file.type;
+
+        if (type.startsWith('video/')) {
             openVideoPortal(data);
         } else {
-            renderMedia(data, file.type, file.name);
+            renderMedia(data, type, file.name);
         }
     };
     reader.readAsDataURL(file);
-}
-
-function openVideoPortal(src) {
-    portalContent.innerHTML = `<video src="${src}" autoplay loop playsinline></video>`;
-    portal.style.display = 'flex';
-    gsap.from(portal, { opacity: 0, duration: 1 });
-    logToTerminal('IMMERSIVE_PORTAL_ACTIVE: ESC TO RETURN', 'SYSTEM');
-}
-
-function closePortal() {
-    portalContent.innerHTML = '';
-    portal.style.display = 'none';
-    logToTerminal('PORTAL_CLOSED. RETURNING TO TERMINAL.', 'SYSTEM');
 }
 
 function renderMedia(data, type, name) {
@@ -85,9 +76,8 @@ function renderMedia(data, type, name) {
 
     if (type.startsWith('audio/')) {
         const audio = new Audio(data);
-        audio.play();
+        audio.play().catch(e => logToTerminal('AUDIO_ERROR: CLICK_UI_FIRST', 'ERROR'));
         
-        // MIND-BLOW VISUALIZER
         const container = document.createElement('div');
         container.className = 'audio-visual-container';
         for(let i=0; i<15; i++) {
@@ -97,18 +87,51 @@ function renderMedia(data, type, name) {
             container.appendChild(bar);
         }
         display.appendChild(container);
-        
-        // Sync particles to audio vibe
-        gsap.to(particles.rotation, { y: "+=6.28", duration: 10, repeat: -1, ease: "none" });
+        gsap.to(particles.rotation, { y: "+=6.28", duration: 5, repeat: -1, ease: "none" });
     } else if (type.startsWith('image/')) {
         const img = document.createElement('img');
         img.src = data;
         img.style.maxWidth = "100%";
         display.appendChild(img);
     }
+    gsap.from(display, { duration: 0.5, scale: 0.8, opacity: 0 });
 }
 
-// --- UTILS & EVENTS ---
+function openVideoPortal(src) {
+    portalContent.innerHTML = `<video src="${src}" autoplay loop playsinline controls></video>`;
+    portal.style.display = 'flex';
+    gsap.from(portal, { opacity: 0, duration: 1 });
+}
+
+window.closePortal = function() {
+    portalContent.innerHTML = '';
+    portal.style.display = 'none';
+};
+
+// --- EVENTS ---
+if(injectBtn) {
+    injectBtn.addEventListener('click', () => {
+        mediaInput.click();
+    });
+}
+
+mediaInput.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files[0]) {
+        processFile(e.target.files[0]);
+    }
+});
+
+// Drag and Drop
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); });
+dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    if (e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]);
+});
+
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closePortal();
+});
+
 function logToTerminal(msg, type = 'SYSTEM') {
     const p = document.createElement('p');
     p.className = 'line';
@@ -117,19 +140,11 @@ function logToTerminal(msg, type = 'SYSTEM') {
     terminalOutput.scrollTop = terminalOutput.scrollHeight;
 }
 
-injectBtn.addEventListener('click', () => mediaInput.click());
-mediaInput.addEventListener('change', (e) => {
-    if (e.target.files[0]) processFile(e.target.files[0]);
-});
-
-// ESC Key closes portal
-window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closePortal();
-});
-
 function animate() {
     requestAnimationFrame(animate);
-    particles.rotation.x += 0.0005;
-    particles.rotation.y += 0.0005;
+    if(particles) {
+        particles.rotation.x += 0.0005;
+        particles.rotation.y += 0.0005;
+    }
     renderer.render(scene, camera);
 }
