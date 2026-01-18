@@ -10,7 +10,10 @@
 </head>
 <body>
     <div id="boot-overlay" onclick="startTerminal()">
-        <div class="boot-text">CLICK TO INITIALIZE EPIC TECH AI MEDIA LINK</div>
+        <div class="boot-text">
+            [ SIGNAL DETECTED ]<br>
+            CLICK TO INITIALIZE EPIC TECH AI MEDIA LINK
+        </div>
     </div>
 
     <canvas id="neural-canvas"></canvas>
@@ -24,11 +27,11 @@
             <div class="system-status">
                 <div class="status-item">
                     <span class="label">WALLET:</span>
-                    <span class="value" id="token-balance">0000</span> <span class="label">SMKN</span>
+                    <span id="token-balance" class="value">0000</span> <span class="label">SMKN</span>
                 </div>
                 <div class="status-item">
-                    <span class="label">LOAD:</span>
-                    <span class="value" id="system-load">0.000%</span>
+                    <span class="label">BACKPACK:</span>
+                    <span id="backpack-status" class="value">EMPTY</span>
                 </div>
             </div>
         </header>
@@ -37,12 +40,13 @@
             <div class="scanner-frame" id="drop-zone">
                 <div class="scan-overlay"></div>
                 <div id="terminal-output">
-                    <p class="line">[SYSTEM] EPIC TECH AI CORE V2.3 ONLINE.</p>
-                    <p class="line">[SYSTEM] MULTI-MEDIA INJECTOR: READY.</p>
+                    <p class="line">[SYSTEM] EPIC TECH AI CORE V2.4 ONLINE.</p>
+                    <p class="line">[SYSTEM] PERSISTENT STORAGE: ACTIVE.</p>
+                    <p class="line">[SYSTEM] WAITING FOR MEDIA INJECTION...</p>
                 </div>
             </div>
 
-            <div class="media-preview">
+            <div class="media-preview" id="media-preview-container">
                 <div id="asset-display">
                     <div class="neural-orb"></div>
                 </div>
@@ -52,7 +56,7 @@
 
         <section class="control-array">
             <div class="input-nexus">
-                <input type="text" id="neural-input" placeholder="INJECT COMMAND..." spellcheck="false" autocomplete="off">
+                <input type="text" id="neural-input" placeholder="ENTER NEURAL COMMAND..." spellcheck="false" autocomplete="off">
                 <input type="file" id="media-upload" hidden accept="video/*,image/*,audio/*">
                 <button id="process-btn">PROCESS_DATA</button>
             </div>
@@ -60,13 +64,13 @@
                 <button class="node-btn" data-cmd="SCAN_SOUND">SCAN_SOUND</button>
                 <button class="node-btn" data-cmd="PULL_BACKPACK">PULL_BACKPACK</button>
                 <button class="node-btn" data-cmd="INJECT_MEDIA">INJECT_MEDIA</button>
-                <button class="node-btn" data-cmd="SYNC_TSI">SYNC_TSI</button>
+                <button class="node-btn" data-cmd="PURGE_DATA">PURGE_DATA</button>
             </div>
         </section>
 
         <footer class="epic-footer">
             <div class="partner-links">
-                <span class="partner">@EpicTechAI</span>
+                <span class="partner neon-text">@EpicTechAI</span>
                 <a href="mailto:epictechai@gmail.com" class="partner clickable-link">epictechai@gmail.com</a>
                 <a href="https://x.com/Sm0ken420" target="_blank" class="partner clickable-link">x.com/Sm0ken420</a>
             </div>
