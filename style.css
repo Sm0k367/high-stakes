@@ -4,7 +4,6 @@
     --epic-dark: #020202;
     --epic-border: rgba(0, 242, 255, 0.3);
     --glow: 0 0 15px rgba(0, 242, 255, 0.5);
-    --wallet-glow: 0 0 20px rgba(255, 0, 255, 0.3);
 }
 
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
@@ -29,130 +28,100 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
+    z-index: 1;
 }
 
 #ui-container {
     position: relative;
-    z-index: 10;
+    z-index: 10; /* Above the canvas */
     display: flex;
     flex-direction: column;
     height: 100vh;
     padding: 20px;
-    background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.5) 100%);
+    background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.6) 100%);
 }
 
-/* --- HEADER & WALLET --- */
-.epic-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    border-bottom: 1px solid var(--epic-border);
-    padding-bottom: 15px;
-}
-
-.glitch-title {
-    font-size: 2.5rem;
-    letter-spacing: 8px;
-    text-shadow: var(--glow);
-    position: relative;
-}
-
-.system-status {
-    background: rgba(255, 0, 255, 0.05);
-    padding: 10px;
-    border: 1px solid rgba(255, 0, 255, 0.2);
-    box-shadow: var(--wallet-glow);
-}
-
-#token-balance {
-    color: var(--epic-magenta);
-    font-weight: bold;
-    font-size: 1.2rem;
-}
-
-/* --- VIEWPORT & DROP ZONE --- */
 .viewport {
     flex: 1;
     display: grid;
-    grid-template-columns: 1.5fr 1fr;
+    grid-template-columns: 1.2fr 1fr;
     gap: 20px;
     padding: 20px 0;
-    overflow: hidden;
+    min-height: 0; /* Important for flex child scrolling */
 }
 
-.scanner-frame {
-    border: 1px solid var(--epic-border);
-    background: rgba(0, 242, 255, 0.05);
-    position: relative;
-    padding: 20px;
-    overflow-y: auto;
-    transition: all 0.3s ease;
-}
-
-.scanner-frame.drag-over {
-    background: rgba(0, 242, 255, 0.2);
-    border: 2px dashed var(--epic-cyan);
-    transform: scale(0.99);
-}
-
-#terminal-output {
-    font-size: 0.85rem;
-    line-height: 1.6;
-}
-
+/* --- MEDIA PREVIEW FIXES --- */
 .media-preview {
     border: 1px solid var(--epic-magenta);
-    background: rgba(5, 5, 5, 0.8);
+    background: rgba(0, 0, 0, 0.9);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
     overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(255, 0, 255, 0.1);
+}
+
+#asset-display {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5;
 }
 
 #asset-display img, #asset-display video {
-    max-width: 90%;
-    max-height: 250px;
+    max-width: 95%;
+    max-height: 90%;
     border: 1px solid var(--epic-magenta);
-    box-shadow: 0 0 20px rgba(255, 0, 255, 0.2);
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+    object-fit: contain;
 }
 
-/* --- CONTROLS --- */
-.quick-nodes {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+.neural-orb {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid var(--epic-magenta);
+    animation: pulse 4s infinite;
 }
 
-.node-btn {
-    background: transparent;
+/* --- SCANNER & TERMINAL --- */
+.scanner-frame {
     border: 1px solid var(--epic-border);
-    color: var(--epic-cyan);
-    padding: 12px;
-    font-family: inherit;
-    transition: 0.3s;
+    background: rgba(0, 242, 255, 0.05);
+    padding: 20px;
+    overflow-y: auto;
+    position: relative;
 }
 
-.node-btn:hover {
-    background: var(--epic-cyan);
-    color: #000;
+.scanner-frame.drag-over {
+    background: rgba(0, 242, 255, 0.2);
+    border: 2px dashed var(--epic-cyan);
 }
 
-/* --- EFFECTS --- */
+/* --- CRT & OVERLAYS --- */
 .crt-lines {
     position: fixed;
     inset: 0;
     background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
     background-size: 100% 4px;
-    z-index: 100;
-    pointer-events: none;
+    z-index: 100; /* Highest z-index */
+    pointer-events: none; /* CRITICAL: Allows clicking through to video */
+    opacity: 0.4;
 }
 
-@keyframes scanMove {
-    0% { top: 0%; }
-    100% { top: 100%; }
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.2); opacity: 1; }
 }
+
+/* Rest of standard terminal styles (Headers, Nodes, etc) from previous turns... */
+.epic-header { display: flex; justify-content: space-between; border-bottom: 1px solid var(--epic-border); padding-bottom: 15px; }
+.glitch-title { font-size: 2rem; letter-spacing: 5px; }
+.quick-nodes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
+.node-btn { background: transparent; border: 1px solid var(--epic-border); color: var(--epic-cyan); padding: 10px; font-family: inherit; }
+.node-btn:hover { background: var(--epic-cyan); color: #000; }
+#neural-input { width: 100%; background: #111; border: 1px solid var(--epic-cyan); padding: 15px; color: #fff; font-family: inherit; margin-bottom: 10px; }
