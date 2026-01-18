@@ -3,7 +3,6 @@
     --epic-magenta: #ff00ff;
     --epic-dark: #020202;
     --glow: 0 0 20px rgba(0, 242, 255, 0.6);
-    --magenta-glow: 0 0 25px rgba(255, 0, 255, 0.7);
 }
 
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
@@ -19,23 +18,24 @@ body {
     text-transform: uppercase;
 }
 
-/* --- THE STUNNER: GATEWAY --- */
+/* --- THE GATEWAY --- */
 #boot-overlay {
     position: fixed;
     inset: 0;
-    background: radial-gradient(circle, #0a0a0a 0%, #000 100%);
+    background: #000;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 10000;
+    z-index: 99999; /* Highest possible to ensure first click */
+    cursor: pointer;
 }
 
 .visual-gate {
     position: relative;
-    width: 200px;
-    height: 200px;
-    margin-bottom: 40px;
+    width: 150px;
+    height: 150px;
+    margin-bottom: 30px;
 }
 
 .gate-ring {
@@ -44,83 +44,84 @@ body {
     border: 2px solid var(--epic-cyan);
     border-radius: 50%;
     animation: rotate-gate 4s linear infinite;
-    box-shadow: var(--glow);
 }
-
-.gate-ring:nth-child(2) { border-color: var(--epic-magenta); animation-duration: 6s; animation-direction: reverse; transform: scale(0.8); }
-.gate-ring:nth-child(3) { border-style: dashed; animation-duration: 10s; transform: scale(1.2); }
 
 @keyframes rotate-gate {
     from { transform: rotate(0deg) scale(1); }
     to { transform: rotate(360deg) scale(1.1); }
 }
 
-/* --- FULLSCREEN VIDEO PORTAL --- */
-.hidden-portal {
+/* --- THE BACKGROUND --- */
+#neural-canvas {
     position: fixed;
     inset: 0;
-    background: #000;
-    z-index: 5000;
-    display: none; /* Controlled by JS */
-    justify-content: center;
-    align-items: center;
+    z-index: 1; /* Lowest layer */
 }
 
-.close-portal {
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    background: none;
-    border: 1px solid var(--epic-cyan);
-    color: var(--epic-cyan);
-    padding: 10px 20px;
-    z-index: 5001;
-    cursor: pointer;
-}
-
-#portal-content video {
-    width: 100vw;
-    height: 100vh;
-    object-fit: contain;
-}
-
-/* --- MIND-BLOW AUDIO VISUALIZER --- */
-.audio-visual-container {
+/* --- THE INTERFACE --- */
+#ui-container {
+    position: relative;
+    z-index: 100; /* Above canvas */
     display: flex;
-    align-items: flex-end;
-    gap: 8px;
-    height: 200px;
+    flex-direction: column;
+    height: 100vh;
+    padding: 30px;
+    pointer-events: none; /* Allow clicks through to children */
 }
 
-.visual-bar {
-    width: 12px;
-    background: linear-gradient(to top, var(--epic-magenta), var(--epic-cyan));
-    box-shadow: var(--glow);
-    animation: bar-dance 0.4s infinite alternate ease-in-out;
+/* Re-enable pointer events for interactive elements */
+.epic-header, .viewport, .control-array, .epic-footer {
+    pointer-events: auto;
 }
 
-@keyframes bar-dance {
-    from { height: 5%; filter: hue-rotate(0deg); }
-    to { height: 100%; filter: hue-rotate(90deg); }
+.viewport {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 30px;
+    padding: 20px 0;
+    min-height: 0;
 }
 
-/* --- UI STREAMLINING --- */
+/* --- THE BUTTON (THE CORE FIX) --- */
 .main-inject-btn {
     width: 100%;
-    padding: 25px;
-    background: transparent;
-    border: 1px solid var(--epic-cyan);
+    padding: 30px;
+    background: rgba(0, 242, 255, 0.05);
+    border: 2px solid var(--epic-cyan);
     color: var(--epic-cyan);
-    font-size: 1.2rem;
-    letter-spacing: 4px;
-    transition: 0.3s;
-    text-shadow: var(--glow);
+    font-size: 1.1rem;
+    font-weight: bold;
+    letter-spacing: 5px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1000;
 }
 
 .main-inject-btn:hover {
     background: var(--epic-cyan);
     color: #000;
     box-shadow: var(--glow);
+    transform: translateY(-3px);
+}
+
+/* --- VISUALS --- */
+.audio-visual-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    height: 150px;
+}
+
+.visual-bar {
+    flex: 1;
+    background: var(--epic-magenta);
+    animation: bounce 0.5s infinite alternate;
+}
+
+@keyframes bounce {
+    from { height: 10%; }
+    to { height: 100%; }
 }
 
 .crt-lines {
@@ -128,11 +129,24 @@ body {
     inset: 0;
     background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
     background-size: 100% 4px;
-    z-index: 101;
-    pointer-events: none;
-    opacity: 0.3;
+    z-index: 999; /* Below overlay, above UI */
+    pointer-events: none; /* VERY IMPORTANT: Prevents blocking clicks */
+    opacity: 0.2;
 }
 
-/* Rest of structure... */
-#ui-container { position: relative; z-index: 100; display: flex; flex-direction: column; height: 100vh; padding: 40px; }
-.viewport { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.hidden-portal {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 10000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.clickable-link {
+    color: var(--epic-cyan);
+    text-decoration: none;
+    font-weight: bold;
+    pointer-events: auto;
+}
