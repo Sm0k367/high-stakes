@@ -3,17 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPIC TECH AI // MEDIA TERMINAL</title>
+    <title>EPIC TECH AI // NEURAL OVERRIDE</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
 <body>
     <div id="boot-overlay" onclick="startTerminal()">
-        <div class="boot-text">
-            [ SIGNAL DETECTED ]<br>
-            CLICK TO INITIALIZE EPIC TECH AI MEDIA LINK
+        <div class="visual-gate">
+            <div class="gate-ring"></div>
+            <div class="gate-ring"></div>
+            <div class="gate-ring"></div>
         </div>
+        <div class="boot-text">
+            <span class="glitch-title" data-text="INITIALIZE NEURAL LINK">INITIALIZE NEURAL LINK</span>
+            <p>[ CLICK TO ENTER THE MACHINE ]</p>
+        </div>
+    </div>
+
+    <div id="fullscreen-video-portal" class="hidden-portal">
+        <button class="close-portal" onclick="closePortal()">× ESC_OVERRIDE</button>
+        <div id="portal-content"></div>
     </div>
 
     <canvas id="neural-canvas"></canvas>
@@ -22,16 +32,12 @@
         <header class="epic-header">
             <div class="brand-block">
                 <h1 class="glitch-title" data-text="EPIC TECH AI">EPIC TECH AI</h1>
-                <div class="sub-brand">HIGH_STAKES // MEDIA_INTERFACE</div>
+                <div class="sub-brand">HIGH_STAKES // NEURAL_FLOW</div>
             </div>
             <div class="system-status">
                 <div class="status-item">
                     <span class="label">WALLET:</span>
                     <span id="token-balance" class="value">0000</span> <span class="label">SMKN</span>
-                </div>
-                <div class="status-item">
-                    <span class="label">BACKPACK:</span>
-                    <span id="backpack-status" class="value">EMPTY</span>
                 </div>
             </div>
         </header>
@@ -40,46 +46,35 @@
             <div class="scanner-frame" id="drop-zone">
                 <div class="scan-overlay"></div>
                 <div id="terminal-output">
-                    <p class="line">[SYSTEM] EPIC TECH AI CORE V2.4 ONLINE.</p>
-                    <p class="line">[SYSTEM] PERSISTENT STORAGE: ACTIVE.</p>
-                    <p class="line">[SYSTEM] WAITING FOR MEDIA INJECTION...</p>
+                    <p class="line">[SYSTEM] NEURAL LINK ESTABLISHED.</p>
                 </div>
             </div>
 
-            <div class="media-preview" id="media-preview-container">
+            <div class="media-preview">
                 <div id="asset-display">
                     <div class="neural-orb"></div>
                 </div>
-                <div class="asset-label" id="media-name">NEURAL_ASSET_LOCKED</div>
+                <div class="asset-label" id="media-name">WAITING_FOR_INJECTION</div>
             </div>
         </main>
 
         <section class="control-array">
-            <div class="input-nexus">
-                <input type="text" id="neural-input" placeholder="ENTER NEURAL COMMAND..." spellcheck="false" autocomplete="off">
+            <div class="single-nexus">
                 <input type="file" id="media-upload" hidden accept="video/*,image/*,audio/*">
-                <button id="process-btn">PROCESS_DATA</button>
-            </div>
-            <div class="quick-nodes">
-                <button class="node-btn" data-cmd="SCAN_SOUND">SCAN_SOUND</button>
-                <button class="node-btn" data-cmd="PULL_BACKPACK">PULL_BACKPACK</button>
-                <button class="node-btn" data-cmd="INJECT_MEDIA">INJECT_MEDIA</button>
-                <button class="node-btn" data-cmd="PURGE_DATA">PURGE_DATA</button>
+                <button id="inject-btn" class="main-inject-btn">INJECT_MEDIA_TO_NEURAL_LINK</button>
             </div>
         </section>
 
         <footer class="epic-footer">
             <div class="partner-links">
-                <span class="partner neon-text">@EpicTechAI</span>
-                <a href="mailto:epictechai@gmail.com" class="partner clickable-link">epictechai@gmail.com</a>
-                <a href="https://x.com/Sm0ken420" target="_blank" class="partner clickable-link">x.com/Sm0ken420</a>
+                <a href="mailto:epictechai@gmail.com" class="clickable-link">EMAIL</a>
+                <a href="https://x.com/Sm0ken420" target="_blank" class="clickable-link">X_COM</a>
             </div>
-            <div class="legal">© 2026 EPIC TECH AI // POWERED BY THE MACHINE</div>
+            <div class="legal">© 2026 EPIC TECH AI // V2.5_IMMERSIVE</div>
         </footer>
     </div>
 
     <div class="crt-lines"></div>
-    <div class="flicker"></div>
 
     <script src="main.js"></script>
 </body>
